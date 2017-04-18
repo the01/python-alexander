@@ -14,7 +14,6 @@ __date__ = "2017-04-15"
 
 from .intent_msg import IntentMessage
 
-
 class ActorMessage(IntentMessage):
     """
     Actor message sent by Actor after processing IntentMessage

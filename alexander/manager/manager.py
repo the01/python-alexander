@@ -16,12 +16,11 @@ from abc import ABCMeta
 import time
 
 from nameko.standalone.rpc import ClusterRpcProxy
-from kombu import Exchange
 
-from .reactor.module import ReactorModule
-from .reactor.exceptions import NoProxyException
-from .reactor.events import setup_kombu
-from .dto import ActorMessage,serialize, deserialize
+from ..reactor.module import ReactorModule
+from ..reactor.exceptions import NoProxyException
+from ..reactor.events import setup_kombu
+from ..dto import serialize, deserialize
 
 
 def proxy_set(f):

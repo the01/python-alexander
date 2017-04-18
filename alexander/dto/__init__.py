@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 
 __author__ = "d01"
 __email__ = "jungflor@gmail.com"
@@ -17,8 +17,3 @@ from .input_msg import InputMessage
 from .intent_msg import IntentMessage
 from .actor_msg import ActorMessage
 from .utils import serialize, deserialize, encode, decode
-
-__all__ = [
-    "BasicMessage", "InputMessage", "IntentMessage", "ActorMessage"
-    "serialize", "deserialize", "encode", "decode"
-]

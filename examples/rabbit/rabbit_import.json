@@ -1,0 +1,76 @@
+{
+  "rabbit_version": "3.6.9",
+  "users": [
+    {
+      "name": "admin",
+      "password_hash": "thu/CmUbiIDD8r/l22bHocEJ+tPZinOYt5aYAz+/88zevqLc",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "administrator"
+    },
+    {
+      "name": "python",
+      "password_hash": "8M6SiqSb1Z1Xl2aCwV6L80dHuxzSgiZK7+nzRSkqnOuxWQPO",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "management"
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "kombu"
+    },
+    {
+      "name": "nameko"
+    },
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "python",
+      "vhost": "kombu",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "admin",
+      "vhost": "nameko",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "admin",
+      "vhost": "kombu",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "admin",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "python",
+      "vhost": "nameko",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "parameters": [],
+  "global_parameters": [
+    {
+      "name": "cluster_name",
+      "value": "rabbit@cluster"
+    }
+  ],
+  "policies": [],
+  "queues": [],
+  "exchanges": [],
+  "bindings": []
+}
