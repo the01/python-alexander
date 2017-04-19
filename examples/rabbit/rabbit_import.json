@@ -9,7 +9,7 @@
     },
     {
       "name": "python",
-      "password_hash": "8M6SiqSb1Z1Xl2aCwV6L80dHuxzSgiZK7+nzRSkqnOuxWQPO",
+      "password_hash": "thu/CmUbiIDD8r/l22bHocEJ+tPZinOYt5aYAz+/88zevqLc",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": "management"
     }
