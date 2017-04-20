@@ -10,7 +10,7 @@ __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
 __version__ = "0.1.2"
-__date__ = "2017-04-18"
+__date__ = "2017-04-20"
 # Created: ?
 
 try:
@@ -30,7 +30,7 @@ def get_version():
     """
     Parse the version information from the init file
     """
-    version_file = os.path.join("alexander", "__init__.py")
+    version_file = os.path.join("alexander_fw", "__init__.py")
     initfile_lines = open(version_file, "rt").readlines()
     version_reg = r"^__version__ = ['\"]([^'\"]*)['\"]"
     for line in initfile_lines:
@@ -58,7 +58,7 @@ assert version is not None
 assert requirements is not None
 
 setup(
-    name="alexander",
+    name="alexander_fw",
     version=version,
     description="",
     # long_description=readme + "\n\n" + history,
@@ -66,10 +66,10 @@ setup(
     author_email="jungflor@gmail.com",
     url="https://github.com/the01/python-alexander",
     packages=[
-        "alexander",
-        "alexander.dto",
-        "alexander.manager",
-        "alexander.reactor"
+        "alexander_fw",
+        "alexander_fw.dto",
+        "alexander_fw.manager",
+        "alexander_fw.reactor"
     ],
     install_requires=requirements,
     license="MIT License",

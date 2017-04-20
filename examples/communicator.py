@@ -14,8 +14,8 @@ __date__ = "2017-04-15"
 
 from flotils.runable import SignalStopWrapper
 
-from alexander.reactor import ReactorModule
-from alexander.dto import InputMessage
+from alexander_fw.reactor import ReactorModule
+from alexander_fw.dto import InputMessage
 
 
 class TestCommunicator(ReactorModule):

@@ -1,0 +1,11 @@
+actors:
+  - echo
+
+broker: "amqp://python:1234@localhost/nameko"
+rpc_timeout: 5.0
+nameko:
+  connection_timeout: 2.0
+
+event_listener:
+  heartbeat: null
+  accept_formats: ["json", "datetimejson"]

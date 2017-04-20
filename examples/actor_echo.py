@@ -15,7 +15,7 @@ __date__ = "2017-04-15"
 from nameko.rpc import rpc
 from flotils import get_logger
 
-from alexander.dto import ActorMessage, serialize
+from alexander_fw.dto import ActorMessage, serialize
 
 
 logger = get_logger()
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     from flotils.logable import default_logging_config
     from nameko.cli.main import main
     from kombu.serialization import register
-    from alexander.dto import encode, decode
+    from alexander_fw.dto import encode, decode
 
     logging.config.dictConfig(default_logging_config)
     logging.getLogger().setLevel(logging.DEBUG)
