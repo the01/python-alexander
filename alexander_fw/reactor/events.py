@@ -8,8 +8,8 @@ __author__ = "d01"
 __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2016, Florian JUNG"
 __license__ = "All rights reserved"
-__version__ = "0.1.1"
-__date__ = "2017-04-15"
+__version__ = "0.1.2"
+__date__ = "2017-04-20"
 # Created: 2016-08-19 19:41
 
 import threading
@@ -35,7 +35,6 @@ class EventListener(ConsumerMixin, Loadable, StartStopable):
             settings = {}
         Loadable.__init__(self, settings)
         StartStopable.__init__(self, settings)
-        setup_kombu()
         self._broker_url = settings['AMQP_URI']
         self._heartbeat = settings.get('heartbeat', None)
         events = settings.get('events', [])

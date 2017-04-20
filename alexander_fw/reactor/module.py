@@ -8,8 +8,8 @@ __author__ = "d01"
 __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.1.0"
-__date__ = "2017-04-15"
+__version__ = "0.1.1"
+__date__ = "2017-04-20"
 # Created: 2017-04-15 14:06
 
 from abc import ABCMeta, abstractmethod
@@ -39,6 +39,7 @@ class ReactorModule(Loadable, StartStopable):
 
         evt_sett = settings.get("event_listener", {})
         evt_sett.setdefault('AMQP_URI', broker)
+        evt_sett.setdefault('accept_formats', [serializer])
 
         evt_sett_nameko = dict(evt_sett)
         evt_sett_nameko['AMQP_URI'] = nameko_sett['AMQP_URI']

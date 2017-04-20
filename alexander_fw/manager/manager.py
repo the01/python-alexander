@@ -8,8 +8,8 @@ __author__ = "d01"
 __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.1.0"
-__date__ = "2017-04-15"
+__version__ = "0.1.1"
+__date__ = "2017-04-20"
 # Created: 2017-04-15 14:37
 
 from abc import ABCMeta
@@ -19,17 +19,7 @@ from nameko.standalone.rpc import ClusterRpcProxy
 
 from ..reactor.module import ReactorModule
 from ..reactor.exceptions import NoProxyException
-from ..reactor.events import setup_kombu
 from ..dto import serialize, deserialize
-
-
-def proxy_set(f):
-    @wraps(f)
-    def decorated_function(self, *args, **kwargs):
-        if self.proxy is None:
-            raise NoProxyException("No proxy has been set")
-        return f(self, *args, **kwargs)
-    return decorated_function
 
 
 class Manager(ReactorModule):
@@ -39,7 +29,6 @@ class Manager(ReactorModule):
         if settings is None:
             settings = {}
         super(Manager, self).__init__(settings)
-        setup_kombu()
         nameko_sett = settings['nameko']
 
         self._cluster_proxy = ClusterRpcProxy(
