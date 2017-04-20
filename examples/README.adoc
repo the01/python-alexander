@@ -3,8 +3,35 @@
 == RabbitMQ
 RabbitMQ container set up with users `admin` and `python` using password `1234`
 
+In `rabbit/`:
+
 [source, bash]
 ----
 $ docker build -t rabbitmq-img .
 $ docker run --name rabbit -p 1883:1883 -p 5672:5672 -p 15672:15672 -d rabbitmq-img
 ----
+
+
+== IntentManager
+Run IntentManager connected to rabbitmq
+
+In `intent_manager`:
+
+[source, bash]
+----
+$ docker build -t alex-im-img .
+$ docker run --name alex-im --link rabbit -d alex-im-img
+----
+
+
+== ActorManager
+Run ActorManager connected to rabbitmq
+
+In `actor_manager`:
+
+[source, bash]
+----
+$ docker build -t alex-am-img .
+$ docker run --name alex-am --link rabbit -d alex-am-img
+----
+

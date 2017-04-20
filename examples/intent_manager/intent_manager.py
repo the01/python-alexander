@@ -8,15 +8,15 @@ __author__ = "d01"
 __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "All rights reserved"
-__version__ = "0.1.1"
+__version__ = "0.1.0"
 __date__ = "2017-04-20"
-# Created: 2017-04-20 03:33
+# Created: 2017-04-20 14:09
 
-from alexander_fw import ActorManager
+from alexander_fw import IntentManager
 from flotils.runable import SignalStopWrapper
 
 
-class Wrapper(ActorManager, SignalStopWrapper):
+class Wrapper(IntentManager, SignalStopWrapper):
 
     def __init__(self, settings=None):
         if settings is None:
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     import logging.config
     from flotils.logable import default_logging_config
     from alexander_fw import setup_kombu
-
+    
     logging.config.dictConfig(default_logging_config)
     logging.getLogger().setLevel(logging.DEBUG)
 
@@ -49,11 +49,11 @@ if __name__ == "__main__":
         logging.getLogger().setLevel(logging.DEBUG)
 
     setup_kombu()
-
+    
     instance = Wrapper({
         'settings_file': args.config
     })
-
+    
     try:
         instance.start(True)
     except KeyboardInterrupt:
