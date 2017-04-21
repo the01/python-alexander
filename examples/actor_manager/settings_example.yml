@@ -1,4 +1,5 @@
-actors: []
+actors:
+  - echo
 
 broker: "amqp://python:1234@rabbit/nameko"
 rpc_timeout: 5.0

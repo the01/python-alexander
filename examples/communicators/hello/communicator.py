@@ -8,8 +8,8 @@ __author__ = "d01"
 __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.1.0"
-__date__ = "2017-04-15"
+__version__ = "0.1.1"
+__date__ = "2017-04-20"
 # Created: 2017-04-15 17:59
 
 from flotils.runable import SignalStopWrapper
@@ -18,19 +18,19 @@ from alexander_fw.reactor import ReactorModule
 from alexander_fw.dto import InputMessage
 
 
-class TestCommunicator(ReactorModule):
+class HelloCommunicator(ReactorModule):
 
     def __init__(self, settings=None):
         if settings is None:
             settings = {}
-        super(TestCommunicator, self).__init__(settings)
+        super(HelloCommunicator, self).__init__(settings)
 
     def _setup(self):
         # Setup listeners
-        self._register("communicator_test", "say", "TestCommunicator")
+        self._register("communicator_hello", "say", "HelloCommunicator")
 
     def communicate(self, msg):
-        msg.source = "communicator_test"
+        msg.source = "communicator_hello"
         self.emit(msg, self.get_exchange("manager_intent"))
 
     def react_nameko(self, exchange, routing_key, msg):
@@ -39,19 +39,20 @@ class TestCommunicator(ReactorModule):
     def react(self, exchange, routing_key, msg):
         self.debug("{}-{}: {}".format(exchange, routing_key, msg))
 
-        if exchange == "communicator_test":
+        if exchange == "communicator_hello":
             if routing_key == "say":
-                pass
+                from pprint import pformat
+                self.info("Got:\n{}".format(pformat(msg.to_dict())))
 
     def start(self, blocking=False):
         self._setup()
-        super(TestCommunicator, self).start()
+        super(HelloCommunicator, self).start()
 
     def stop(self):
-        super(TestCommunicator, self).stop()
+        super(HelloCommunicator, self).stop()
 
 
-class Wrapper(TestCommunicator, SignalStopWrapper):
+class Wrapper(HelloCommunicator, SignalStopWrapper):
 
     def __init__(self, settings=None):
         if settings is None:
@@ -64,6 +65,7 @@ if __name__ == "__main__":
     import time
     import logging.config
     from flotils.logable import default_logging_config
+    from alexander_fw import setup_kombu
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -80,18 +82,20 @@ if __name__ == "__main__":
     if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
 
-    w = Wrapper({
+    setup_kombu()
+
+    instance = Wrapper({
         'settings_file': args.config
     })
 
     try:
-        w.start(False)
+        instance.start(False)
         while True:
-            w.communicate(InputMessage(
+            instance.communicate(InputMessage(
                 data="Hello"
             ))
             time.sleep(5.0)
     except KeyboardInterrupt:
         pass
     finally:
-        w.stop()
+        instance.stop()

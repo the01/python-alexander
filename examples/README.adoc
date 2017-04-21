@@ -1,6 +1,14 @@
 = Sample setup
 
-== RabbitMQ
+== Compose
+A docker-compose file has been provided to start all provided services for you
+
+
+
+
+== Manual
+
+=== RabbitMQ
 RabbitMQ container set up with users `admin` and `python` using password `1234`
 
 In `rabbit/`:
@@ -12,26 +20,64 @@ $ docker run --name rabbit -p 1883:1883 -p 5672:5672 -p 15672:15672 -d rabbitmq-
 ----
 
 
-== IntentManager
+
+=== IntentManager
 Run IntentManager connected to rabbitmq
 
 In `intent_manager`:
 
 [source, bash]
 ----
-$ docker build -t alex-im-img .
-$ docker run --name alex-im --link rabbit -d alex-im-img
+$ docker build -t alex-manager-intent-img .
+$ docker run --name alex-im --link rabbit -d alex-manager-intent-img
 ----
 
 
-== ActorManager
+
+=== ActorManager
 Run ActorManager connected to rabbitmq
 
 In `actor_manager`:
 
 [source, bash]
 ----
-$ docker build -t alex-am-img .
-$ docker run --name alex-am --link rabbit -d alex-am-img
+$ docker build -t alex-manager-actor-img .
+$ docker run --name alex-am --link rabbit -d alex-manager-actor-img
 ----
 
+
+
+=== Actors
+
+==== Echo
+A simple actor that just sends any data back
+
+In `echo`:
+
+[source, bash]
+----
+$ docker build -t alex-actor-echo-img .
+$ docker run --name alex-a-echo --link rabbit -d alex-actor-echo-img
+----
+
+
+
+=== Communicators
+
+==== Hello
+A simple communicator that continuously sends 'Hello' every 5 seconds
+
+In `hello`:
+
+[source, bash]
+----
+$ docker build -t alex-communicator-hello-img .
+$ docker run --name alex-c-hello --link rabbit -d alex-communicator-hello-img
+----
+
+
+
+=== Intents
+
+==== Direct
+Sends all messages from `hello` to `echo`

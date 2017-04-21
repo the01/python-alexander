@@ -1,11 +1,9 @@
-intents:
-  - direct
-
 broker: "amqp://python:1234@rabbit/nameko"
 rpc_timeout: 5.0
 serializer: "datetimejson"
+
 nameko:
   connection_timeout: 2.0
 
 event_listener:
-  heartbeat: null 
+  heartbeat: null

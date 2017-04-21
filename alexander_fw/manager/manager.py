@@ -43,6 +43,11 @@ class Manager(ReactorModule):
             raise NoProxyException("No proxy has been set")
         return proxy
 
+    def say_result(self, msg):
+        who = msg.source
+        self.emit(msg, self.get_exchange(who))
+
+    # TODO: make who optional
     def say(self, who, msg, result):
         self.debug("Would have sent say - {}: {}\n{}".format(
             who, result, msg
@@ -57,6 +62,7 @@ class Manager(ReactorModule):
             self.get_exchange(who)
         )
 
+    # TODO: make who optional
     def say_error(self, who, msg, result):
         self.debug("Would have sent error - {}: {}\n{}".format(
             who, result, msg

@@ -69,7 +69,7 @@ class ActorManager(Manager):
             else:
                 self.debug("{} returned: {}".format(actor_service, resp))
                 if resp is not None:
-                    self.say(resp.source, resp, "done")
+                    self.say_result(resp)
 
     def start(self, blocking=False):
         self._setup()

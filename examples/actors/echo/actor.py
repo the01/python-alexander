@@ -8,8 +8,8 @@ __author__ = "d01"
 __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.1.0"
-__date__ = "2017-04-15"
+__version__ = "0.1.1"
+__date__ = "2017-04-20"
 # Created: 2017-04-15 17:23
 
 from nameko.rpc import rpc
@@ -43,18 +43,13 @@ if __name__ == "__main__":
 
     from flotils.logable import default_logging_config
     from nameko.cli.main import main
-    from kombu.serialization import register
-    from alexander_fw.dto import encode, decode
+    from alexander_fw import setup_kombu
 
     logging.config.dictConfig(default_logging_config)
     logging.getLogger().setLevel(logging.DEBUG)
     logger = logging.getLogger(__name__)
 
-    register(
-        "datetimejson",
-        encode, decode,
-        "application/datetime-json", "utf-8"
-    )
+    setup_kombu()
 
     pid = os.getpid()
     logger.info(u"Detected pid {}".format(pid))
