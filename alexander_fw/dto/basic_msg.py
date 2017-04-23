@@ -9,7 +9,7 @@ __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
 __version__ = "0.1.0"
-__date__ = "2017-04-15"
+__date__ = "2017-04-23"
 # Created: 2017-04-15 16:02
 
 import uuid as uuid_lib
@@ -38,6 +38,17 @@ class BasicMessage(object):
         if "__type__" in kwargs:
             del kwargs['__type__']
         return cls(**kwargs)
+
+    @classmethod
+    def from_msg(cls, msg):
+        """
+        Creat instance from other message
+
+        :param msg: Message to create instance from
+        :type msg: BasicMessage
+        :return: New instance
+        """
+        return cls.from_dict(msg.to_dict)
 
     def to_dict(self):
         res = self.__dict__
