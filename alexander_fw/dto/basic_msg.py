@@ -48,7 +48,7 @@ class BasicMessage(object):
         :type msg: BasicMessage
         :return: New instance
         """
-        return cls.from_dict(msg.to_dict)
+        return cls.from_dict(msg.to_dict())
 
     def to_dict(self):
         res = self.__dict__

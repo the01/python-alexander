@@ -1,4 +1,12 @@
 version: "3"
+
+#networks:
+#  default:
+    # Connect to default docker network
+#    external:
+#      name: bridge
+
+
 services:
 
 ################
@@ -11,6 +19,7 @@ services:
     restart: always
     ports:
       - "15672:15672"
+    network_mode: bridge
 
 ################
 # Managers
@@ -20,6 +29,7 @@ services:
     container_name: alex-im
     build: ./intent_manager
     restart: always
+    network_mode: bridge
     links:
       - rabbit
     depends_on:
@@ -31,6 +41,7 @@ services:
     container_name: alex-am
     build: ./actor_manager
     restart: always
+    network_mode: bridge
     links:
       - rabbit
     depends_on:
@@ -45,6 +56,19 @@ services:
     container_name: alex-a-echo
     build: ./actors/echo
     restart: always
+    network_mode: bridge
+    links:
+      - rabbit
+    depends_on:
+      - rabbit
+      - manager_actor
+
+  actor_time:
+    image: alex-actor-time-img:latest
+    container_name: alex-a-time
+    build: ./actors/time
+    restart: always
+    network_mode: bridge
     links:
       - rabbit
     depends_on:
@@ -61,6 +85,19 @@ services:
     container_name: alex-c-hello
     build: ./communicators/hello
     restart: always
+    network_mode: bridge
+    links:
+      - rabbit
+    depends_on:
+      - rabbit
+      - manager_intent
+
+  communicator_ticker:
+    image: alex-communicator-ticker-img:latest
+    container_name: alex-c-ticker
+    build: ./communicators/ticker
+    restart: always
+    network_mode: bridge
     links:
       - rabbit
     depends_on:
@@ -77,6 +114,18 @@ services:
     container_name: alex-i-direct
     build: ./intents/direct
     restart: always
+    network_mode: bridge
+    links:
+      - rabbit
+    depends_on:
+      - rabbit
+
+  intent_keyword:
+    image: alex-intent-keyword-img:latest
+    container_name: alex-i-keyword
+    build: ./intents/key
+    restart: always
+    network_mode: bridge
     links:
       - rabbit
     depends_on:

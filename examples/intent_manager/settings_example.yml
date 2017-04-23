@@ -1,5 +1,6 @@
 intents:
   - direct
+  - keyword
 
 broker: "amqp://python:1234@rabbit/nameko"
 rpc_timeout: 5.0

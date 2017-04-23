@@ -61,6 +61,18 @@ $ docker run --name alex-a-echo --link rabbit -d alex-actor-echo-img
 ----
 
 
+==== Time
+A simple actor that tells the current time
+
+In `time`:
+
+[source, bash]
+----
+$ docker build -t alex-actor-time-img .
+$ docker run --name alex-a-time --link rabbit -d alex-actor-time-img
+----
+
+
 
 === Communicators
 
@@ -76,8 +88,25 @@ $ docker run --name alex-c-hello --link rabbit -d alex-communicator-hello-img
 ----
 
 
+==== Ticker
+A simple communicator that continuously asks for the time every 30 seconds
+
+In `ticker`:
+
+[source, bash]
+----
+$ docker build -t alex-communicator-ticker-img .
+$ docker run --name alex-c-ticker --link rabbit -d alex-communicator-ticker-img
+----
+
+
 
 === Intents
 
 ==== Direct
 Sends all messages from `hello` to `echo`
+
+
+
+==== Keyword
+Send to intent where it can find the longest match

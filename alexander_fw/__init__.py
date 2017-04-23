@@ -8,7 +8,7 @@ __author__ = "d01"
 __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.1.4"
+__version__ = "0.1.6"
 __date__ = "2017-04-23"
 # Created: 2017-04-17 20:26
 
