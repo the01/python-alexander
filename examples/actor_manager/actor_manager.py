@@ -29,10 +29,10 @@ if __name__ == "__main__":
     import logging
     import logging.config
     from flotils.logable import default_logging_config
+    from flotils.loadable import load_file
     from alexander_fw import setup_kombu
 
     logging.config.dictConfig(default_logging_config)
-    logging.getLogger().setLevel(logging.DEBUG)
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -45,14 +45,18 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    settings = load_file(args.config)
+
+    if "logging" in settings:
+        logging.config.dictConfig(settings['logging'])
+    if "LOGGING" in settings:
+        logging.config.dictConfig(settings['LOGGING'])
     if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
 
     setup_kombu()
 
-    instance = Wrapper({
-        'settings_file': args.config
-    })
+    instance = Wrapper(settings)
 
     try:
         instance.start(True)
