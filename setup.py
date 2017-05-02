@@ -9,8 +9,8 @@ __author__ = "d01 <Florian Jung>"
 __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.1.2"
-__date__ = "2017-04-20"
+__version__ = "0.1.3"
+__date__ = "2017-05-03"
 # Created: ?
 
 try:
@@ -69,7 +69,8 @@ setup(
         "alexander_fw",
         "alexander_fw.dto",
         "alexander_fw.manager",
-        "alexander_fw.reactor"
+        "alexander_fw.reactor",
+        "alexander_fw.service",
     ],
     install_requires=requirements,
     license="MIT License",
