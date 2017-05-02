@@ -22,6 +22,7 @@ class IntentManager(Manager):
             settings = {}
         super(IntentManager, self).__init__(settings)
         self._intents = settings.get("intents", [])
+        self.debug("Intents: {}".format(self._intents))
 
     def _setup(self):
         # Setup listeners
@@ -61,7 +62,6 @@ class IntentManager(Manager):
         max_like = -1.0
         """ :type : float """
 
-        self.debug("Intents: {}".format(self._intents))
         # Ask all intents who likes it
         for intent in self._intents:
             intent = "service_intent_{}".format(intent)

@@ -12,90 +12,47 @@ __version__ = "0.1.1"
 __date__ = "2017-04-20"
 # Created: 2017-04-15 17:59
 
-from flotils.runable import SignalStopWrapper
-
-from alexander_fw.reactor import ReactorModule
+from nameko.timer import timer
+from flotils import get_logger
 from alexander_fw.dto import InputMessage
+from alexander_fw import CommunicatorService
 
 
-class TickerCommunicator(ReactorModule):
-
-    def __init__(self, settings=None):
-        if settings is None:
-            settings = {}
-        super(TickerCommunicator, self).__init__(settings)
-
-    def _setup(self):
-        # Setup listeners
-        self._register("communicator_ticker", "say", "TickerCommunicator")
-
-    def communicate(self, msg):
-        msg.source = "communicator_ticker"
-        self.emit(msg, self.get_exchange("manager_intent"))
-
-    def react_nameko(self, exchange, routing_key, msg):
-        pass
-
-    def react(self, exchange, routing_key, msg):
-        self.debug("{}-{}: {}".format(exchange, routing_key, msg))
-
-        if exchange == "communicator_ticker":
-            if routing_key == "say":
-                from pprint import pformat
-                self.info("Got:\n{}".format(pformat(msg.to_dict())))
-
-    def start(self, blocking=False):
-        self._setup()
-        super(TickerCommunicator, self).start()
-
-    def stop(self):
-        super(TickerCommunicator, self).stop()
+logger = get_logger()
 
 
-class Wrapper(TickerCommunicator, SignalStopWrapper):
+class TickerCommunicator(CommunicatorService):
+    name = "service_communicator_ticker"
 
-    def __init__(self, settings=None):
-        if settings is None:
-            settings = {}
-        super(Wrapper, self).__init__(settings)
+    def do_say(self, msg):
+        from pprint import pformat
+        logger.info("Got:\n{}".format(pformat(msg.to_dict())))
+
+    @timer(interval=15)
+    def _emit(self):
+        msg = InputMessage(
+            data="time now"
+        )
+        self.communicate(msg)
 
 
 if __name__ == "__main__":
-    import argparse
-    import time
+    import os
+    import sys
     import logging.config
     from flotils.logable import default_logging_config
     from alexander_fw import setup_kombu
+    from nameko.cli.main import main
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--debug", action="store_true",
-        help="Use debug level output"
-    )
-    parser.add_argument(
-        "--config", nargs="?",
-        help="Config file"
-    )
     logging.config.dictConfig(default_logging_config)
-    args = parser.parse_args()
 
-    if args.debug:
-        logging.getLogger().setLevel(logging.DEBUG)
+    pid = os.getpid()
+    logger.info(u"Detected pid {}".format(pid))
+    logger.info(u"Using virtualenv {}".format(hasattr(sys, 'real_prefix')))
+    logger.info(u"Using supervisor {}".format(
+        bool(os.getenv('SUPERVISOR_ENABLED', False)))
+    )
 
     setup_kombu()
+    main()
 
-    instance = Wrapper({
-        'settings_file': args.config
-    })
-
-    try:
-        instance.start(False)
-        while True:
-            instance.communicate(InputMessage(
-                data="time now"
-            ))
-            time.sleep(20.0)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        instance.stop()

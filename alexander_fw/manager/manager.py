@@ -19,7 +19,7 @@ from nameko.standalone.rpc import ClusterRpcProxy
 
 from ..reactor.module import ReactorModule
 from ..reactor.exceptions import NoProxyException
-from ..dto import serialize, deserialize
+from ..dto import ActorMessage
 
 
 class Manager(ReactorModule):
@@ -43,39 +43,25 @@ class Manager(ReactorModule):
             raise NoProxyException("No proxy has been set")
         return proxy
 
-    def say_result(self, msg):
-        who = msg.source
-        self.emit(msg, self.get_exchange(who))
-
     # TODO: make who optional
     def say(self, who, msg, result):
-        self.debug("Would have sent say - {}: {}\n{}".format(
-            who, result, msg
-        ))
-        actor_msg = serialize(msg)
-        actor_msg['__type__'] = "ActorMessage"
-        actor_msg = deserialize(actor_msg)
-        actor_msg.result = result
-        self.debug(self.get_exchange(who))
-        self.emit(
-            actor_msg,
-            self.get_exchange(who)
-        )
+            self.debug("{}: {}\n{}".format(
+                who, result, msg
+            ))
+            actor_msg = ActorMessage.from_msg(msg)
+            actor_msg.result = result
+            self.proxy[who].say(actor_msg)
+
+    def say_result(self, msg):
+        who = msg.source
+        self.say(who, msg, msg.result)
 
     # TODO: make who optional
     def say_error(self, who, msg, result):
-        self.debug("Would have sent error - {}: {}\n{}".format(
+        self.error("Error - {}: {}\n{}".format(
             who, result, msg
         ))
-        actor_msg = serialize(msg)
-        actor_msg['__type__'] = "ActorMessage"
-        actor_msg = deserialize(actor_msg)
-        actor_msg.result = result
-        self.debug(self.get_exchange(who))
-        self.emit(
-            actor_msg,
-            self.get_exchange(who)
-        )
+        self.say(who, msg, result)
 
     def start(self, blocking=False):
         tries = 3
