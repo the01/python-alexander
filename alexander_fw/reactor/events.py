@@ -45,7 +45,7 @@ class EventListener(ConsumerMixin, Loadable, StartStopable):
             :type : dict[unicode, kombu.Exchange] """
         self.process_message = settings.get('process_message')
         """ Process function
-            :type : callable """
+            :type : (unicode, unicode, object) -> None """
         self.connection = None
         """ Connection to broker
             :type : kombu.Connection """
@@ -124,6 +124,15 @@ class EventListener(ConsumerMixin, Loadable, StartStopable):
         )]
 
     def _process_message(self, body, message):
+        """
+        Called whenever a message is received
+
+        :param body: Decoded message body
+        :type body: object
+        :param message: Message instance
+        :type message: kombu.message.Message
+        :rtype: None
+        """
         exchange = message.delivery_info['exchange']
         routing_key = message.delivery_info['routing_key']
 
@@ -138,6 +147,11 @@ class EventListener(ConsumerMixin, Loadable, StartStopable):
         message.ack()
 
     def _run_worker(self):
+        """
+        Connect and run worker
+
+        :rtype: None
+        """
         with Connection(self._broker_url, heartbeat=self._heartbeat) as conn:
             self.connection = conn
             self.run()
