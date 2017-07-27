@@ -9,10 +9,10 @@ __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
 __version__ = "0.1.0"
-__date__ = "2017-05-01"
+__date__ = "2017-07-27"
 # Created: 2017-05-01 23:47
 
-# based on nameko
+# based on https://github.com/nameko/nameko
 import warnings
 from kombu import Exchange
 from six.moves import queue
@@ -25,6 +25,8 @@ from nameko.messaging import Publisher
 
 
 def get_exchange(service_name):
+    # TODO: move to correct exchange
+    # exchange_name = "{}.events".format(service_name)
     exchange_name = "{}".format(service_name)
     exchange = Exchange(
         exchange_name, type="topic", durable=True, auto_delete=False,
@@ -33,6 +35,7 @@ def get_exchange(service_name):
     return exchange
 
 
+# https://github.com/nameko/nameko/blob/master/nameko/standalone/events.py
 def event_dispatcher(nameko_config, **kwargs):
     """ Return a function that dispatches nameko events.
     """

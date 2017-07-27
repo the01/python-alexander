@@ -8,19 +8,20 @@ __author__ = "d01"
 __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 __date__ = "2017-05-27"
 # Created: 2017-04-17 20:26
 
 from . import dto
 from . import reactor
 from . import manager
-from .reactor import ReactorModule
+from .reactor import ReactorModule, RPCListener
 from .reactor.events import setup_kombu
 from .manager import IntentManager, ActorManager
-from .service import CommunicatorService
+from .service import CommunicatorService, StandaloneCommunicatorService
 
 __all_ = [
     "dto", "reactor", "setup_kombu",
-    "IntentManager", "ActorManager", "CommunicatorService"
+    "IntentManager", "ActorManager",
+    "CommunicatorService", "StandaloneCommunicatorService", "RPCListener"
 ]

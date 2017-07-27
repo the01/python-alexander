@@ -92,7 +92,6 @@ class RPCListener(ConsumerMixin, Loadable, StartStopable):
         )
 
     def get_consumers(self, Consumer, channel):
-        self.debug("()")
         return [Consumer(
             queues=[self._nameko_queue_rpc],
             accept=[self._serializer],
@@ -109,10 +108,6 @@ class RPCListener(ConsumerMixin, Loadable, StartStopable):
         :type message: kombu.message.Message
         :rtype: None
         """
-        self.debug(body)
-        self.debug(message.delivery_info)
-        self.debug(message.errors)
-        self.debug(message.properties)
         correlation_id = message.properties.get('correlation_id')
         routing_key = message.properties['reply_to']
         called = message.delivery_info.get('routing_key', "")
@@ -143,7 +138,8 @@ class RPCListener(ConsumerMixin, Loadable, StartStopable):
                     raise MalformedRequest("Message missing `args` or `kwargs`")
                 fn = None
                 # Only allowed methods
-                if self.allowed_functions is None or called in self.allowed_functions:
+                if self.allowed_functions is None \
+                        or called in self.allowed_functions:
                     # Attempt to call
                     fn = getattr(self.service, called, None)
                     if callable(fn):
