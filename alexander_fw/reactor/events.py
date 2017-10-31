@@ -6,26 +6,18 @@ from __future__ import unicode_literals
 
 __author__ = "d01"
 __email__ = "jungflor@gmail.com"
-__copyright__ = "Copyright (C) 2016, Florian JUNG"
+__copyright__ = "Copyright (C) 2016-17, Florian JUNG"
 __license__ = "All rights reserved"
 __version__ = "0.1.2"
-__date__ = "2017-04-20"
+__date__ = "2017-08-10"
 # Created: 2016-08-19 19:41
 
 import threading
 
 from kombu import Exchange, Connection, Queue
 from kombu.mixins import ConsumerMixin
-from kombu.serialization import register
 from flotils.runable import StartStopable
 from flotils import Loadable
-
-
-def setup_kombu():
-    from ..dto.utils import encode, decode
-    register(
-        "datetimejson", encode, decode, "application/datetime-json", "utf-8"
-    )
 
 
 class EventListener(ConsumerMixin, Loadable, StartStopable):
