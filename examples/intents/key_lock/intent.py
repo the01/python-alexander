@@ -8,8 +8,8 @@ __author__ = "d01"
 __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.1.0"
-__date__ = "2017-10-31"
+__version__ = "0.1.1"
+__date__ = "2017-12-02"
 # Created: 2017-10-30 20:55
 
 from nameko.rpc import rpc, RpcProxy
@@ -92,7 +92,10 @@ class LockKeywordIntentService(object):
                 res = IntentMessage.from_msg(message)
                 res.intent = "ok"
                 return res
-            message.data = "{} {}".format(intent, message.data)
+            if message.data is not None:
+                message.data = "{} {}".format(intent, message.data)
+            else:
+                message.data = "{}".format(intent)
             return self.keyword.intent(message)
         if lock_cmd:
             message.data = rest
