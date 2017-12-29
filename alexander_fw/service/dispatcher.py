@@ -20,7 +20,7 @@ from six.moves import queue
 from nameko.amqp import get_connection, get_producer, UndeliverableMessage
 from nameko.constants import (
     DEFAULT_RETRY_POLICY, DEFAULT_SERIALIZER, SERIALIZER_CONFIG_KEY)
-from nameko.messaging import AMQP_URI_CONFIG_KEY, PERSISTENT
+from nameko.constants import AMQP_URI_CONFIG_KEY, PERSISTENT
 from nameko.messaging import Publisher
 
 

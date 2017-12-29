@@ -25,6 +25,7 @@ class LockKeywordIntentService(object):
     name = "service_intent_keyword_lock"
     keyword = RpcProxy("service_intent_keyword")
     keystore = RpcProxy("service_keystore")
+    """ :type : alexander_fw.service.keystore.KeystoreService """
 
     @rpc
     def status(self):
