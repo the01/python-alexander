@@ -8,8 +8,8 @@ __author__ = "d01"
 __email__ = "jungflor@gmail.com"
 __copyright__ = "Copyright (C) 2017, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.4.0"
-__date__ = "2017-12-29"
+__version__ = "0.4.1"
+__date__ = "2018-04-08"
 # Created: 2017-04-17 20:26
 
 from . import dto
