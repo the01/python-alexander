@@ -6,10 +6,10 @@ from __future__ import unicode_literals
 
 __author__ = "d01"
 __email__ = "jungflor@gmail.com"
-__copyright__ = "Copyright (C) 2016-17, Florian JUNG"
+__copyright__ = "Copyright (C) 2016-19, Florian JUNG"
 __license__ = "All rights reserved"
 __version__ = "0.1.2"
-__date__ = "2017-08-10"
+__date__ = "2019-04-14"
 # Created: 2016-08-19 19:41
 
 import threading
@@ -40,7 +40,7 @@ class EventListener(ConsumerMixin, Loadable, StartStopable):
             :type : (unicode, unicode, object) -> None """
         self.connection = None
         """ Connection to broker
-            :type : kombu.Connection """
+            :type : None | kombu.Connection """
         self._queues = []
         """ Queues listening on
             :type : list[kombu.Queue] """

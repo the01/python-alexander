@@ -19,7 +19,7 @@ import kombu.serialization
 from kombu import Exchange, Connection, Queue, producers
 from kombu.mixins import ConsumerMixin
 from nameko.exceptions import (
-    ContainerBeingKilled, MalformedRequest, MethodNotFound, RpcConnectionError,
+    ContainerBeingKilled, MalformedRequest, MethodNotFound,
 UnknownService, UnserializableValueError, deserialize, serialize)
 from flotils import Loadable, StartStopable
 
@@ -49,16 +49,16 @@ class RPCListener(ConsumerMixin, Loadable, StartStopable):
             :type : None | list[unicode] """
         self.connection = None
         """ Connection to broker
-            :type : kombu.Connection """
+            :type : None | kombu.Connection """
         self._nameko_exchange_rpc_name = settings.get(
             'rpc_exchange', "nameko-rpc"
         )
         """ Name of exchange
             :type : unicode """
         self._nameko_exchange_rpc = None
-        """ :type : kombu.Exchange """
+        """ :type : None | kombu.Exchange """
         self._nameko_queue_rpc = None
-        """ :type : kombu.Queue """
+        """ :type : None | kombu.Queue """
         self._service_name = settings['service_name']
 
     def _thread_wrapper(self, func, *args, **kwargs):

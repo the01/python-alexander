@@ -6,10 +6,10 @@ from __future__ import unicode_literals
 
 __author__ = "d01"
 __email__ = "jungflor@gmail.com"
-__copyright__ = "Copyright (C) 2017, Florian JUNG"
+__copyright__ = "Copyright (C) 2017-19, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.1.1"
-__date__ = "2017-04-20"
+__version__ = "0.1.2"
+__date__ = "2019-04-14"
 # Created: 2017-04-15 14:37
 
 from abc import ABCMeta
@@ -23,6 +23,9 @@ from ..dto import ActorMessage
 
 
 class Manager(ReactorModule):
+    """
+    Manager
+    """
     __metaclass__ = ABCMeta
 
     def __init__(self, settings=None):
@@ -70,10 +73,13 @@ class Manager(ReactorModule):
             self.debug("Trying to establish nameko proxy..")
             try:
                 self._proxy = self._cluster_proxy.start()
-            except:
+            except Exception as e:
                 if tries <= 1:
                     raise
-                self.exception("Failed to connect proxy")
+                if isinstance(e, ConnectionRefusedError):
+                    self.error("Proxy connection refused")
+                else:
+                    self.exception("Failed to connect proxy")
                 self.info("Sleeping {}s".format(round(sleep_time, 2)))
                 time.sleep(sleep_time)
                 sleep_time **= 2

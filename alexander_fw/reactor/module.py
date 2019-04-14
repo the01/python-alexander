@@ -34,6 +34,7 @@ class ReactorModule(EmitterModule):
         evt_sett.setdefault('accept_formats', [self._serializer])
 
         evt_sett_nameko = dict(evt_sett)
+        evt_sett_nameko.setdefault('id', "nameko")
         evt_sett_nameko['AMQP_URI'] = nameko_sett['AMQP_URI']
         evt_sett_nameko.update(settings.get("event_listener_nameko", {}))
 
