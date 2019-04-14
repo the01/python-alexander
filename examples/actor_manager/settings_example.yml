@@ -1,7 +1,3 @@
-actors:
-  - echo
-  - time
-
 broker: "amqp://python:1234@rabbit/nameko"
 rpc_timeout: 5.0
 serializer: "datetimejson"
@@ -10,16 +6,6 @@ nameko:
 
 event_listener:
   heartbeat: null
-
-broker: "amqp://python:Yatezu7egeStuc3fadaM@serv.home.lan/nameko"
-rpc_timeout: 5.0
-serializer: "datetimejson"
-nameko:
-  connection_timeout: 2.0
-
-event_listener:
-  heartbeat: null
-
 
 actors:
   - ping
