@@ -6,10 +6,10 @@ from __future__ import unicode_literals
 
 __author__ = "d01"
 __email__ = "jungflor@gmail.com"
-__copyright__ = "Copyright (C) 2017, Florian JUNG"
+__copyright__ = "Copyright (C) 2017-19, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.1.0"
-__date__ = "2017-07-27"
+__version__ = "0.1.1"
+__date__ = "2019-04-17"
 # Created: 2017-05-01 23:47
 
 # based on https://github.com/nameko/nameko
@@ -29,7 +29,7 @@ def get_exchange(service_name):
     # exchange_name = "{}.events".format(service_name)
     exchange_name = "{}".format(service_name)
     exchange = Exchange(
-        exchange_name, type="topic", durable=True, auto_delete=False,
+        exchange_name, type="topic", durable=True, auto_delete=True,
         delivery_mode=PERSISTENT
     )
     return exchange
