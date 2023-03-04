@@ -1,7 +1,15 @@
+include README.md
+
+include setup.py
+include setup.cfg
+include tox.ini
 include requirements.txt
+include requirements-test.txt
+include requirements-dev.txt
 include LICENSE
+recursive-include src *.py
 
-recursive-exclude * __pycache__
-recursive-exclude * *.py[co]
-
-recursive-include docs
+prune env
+prune venv
+prune .tox
+prune tests

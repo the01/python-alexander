@@ -1,60 +1,73 @@
 # -*- coding: UTF-8 -*-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 __author__ = "d01"
 __email__ = "jungflor@gmail.com"
-__copyright__ = "Copyright (C) 2017, Florian JUNG"
+__copyright__ = "Copyright (C) 2017-23, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.1.0"
-__date__ = "2017-05-01"
+__version__ = "0.2.0"
+__date__ = "2023-03-02"
 # Created: 2017-05-01 19:47
 
-from abc import ABCMeta
+from abc import ABC
 import datetime
+from typing import Any, Dict, Optional, Union
 import uuid
 
 from flotils import Loadable, StartStopable
-from kombu import producers, Connection, Exchange
+from kombu import Connection, Exchange, producers
 
-from ..dto import InputMessage, IntentMessage, ActorMessage
+from ..dto import ActorMessage, InputMessage, IntentMessage
 
 
-class EmitterModule(Loadable, StartStopable):
-    __metaclass__ = ABCMeta
+class EmitterModule(Loadable, StartStopable, ABC):
+    """ Class for emitting events """
 
-    def __init__(self, settings=None):
+    def __init__(self, settings: Optional[Dict[str, Any]] = None):
+        """ Constructor """
         if settings is None:
             settings = {}
-        super(EmitterModule, self).__init__(settings)
-        nameko_sett = settings['nameko']
-        self._broker = settings.get('broker', nameko_sett.get('AMQP_URI'))
-        self._serializer = settings.get(
+
+        super().__init__(settings)
+
+        nameko_sett: dict = settings['nameko']
+        self._broker: str = settings.get('broker', nameko_sett.get('AMQP_URI'))
+        """ Url to connect to message broker """
+        self._serializer: str = settings.get(
             'serializer', nameko_sett.get('serializer', "datetimejson")
         )
-        self._connection_timeout = settings.get('connection_timeout', 2.0)
+        """ Serializer for data going through the broker """
+        self._connection_timeout: float = settings.get('connection_timeout', 2.0)
+        """ Timeout for nameko connection """
 
-        self._connection = Connection(self._broker)
-        self._com_exchanges = {}
+        self._connection: Connection = Connection(self._broker)
+        """ Connection to broker """
+        self._com_exchanges: Dict[str, Exchange] = {}
+        """ Exchanges this instance uses """
 
-    def get_exchange(self, key):
+    def get_exchange(self, key: str) -> Exchange:
+        """
+        Get exchange or create if not already in cache
+
+        :param key: Name of exchange
+        :return: The requested exchange
+        """
         if key not in self._com_exchanges:
             self._com_exchanges[key] = Exchange(
                 key, type="topic", durable=True, auto_delete=False
             )
+
         return self._com_exchanges[key]
 
-    def emit(self, message, exchange):
+    def emit(
+            self,
+            message: Union[ActorMessage, InputMessage, IntentMessage],
+            exchange: Exchange,
+    ) -> None:
         """
         Emit data
 
         :param message: Message data to emit
-        :type message: dto.InputMessage | dto.IntentMessage
         :param exchange: Exchange to publish message on
-        :type exchange: kombu.Exchange
-        :rtype: None
         """
         if isinstance(message, ActorMessage):
             routing_key = "say"
@@ -63,14 +76,17 @@ class EmitterModule(Loadable, StartStopable):
         elif isinstance(message, InputMessage):
             routing_key = "input_new"
         else:
-            self.error("No routing key for\n{}".format(message))
+            self.error(f"No routing key for\n{message}")
+
             raise ValueError("No routing key")
+
         if message.timestamp is None:
             message.timestamp = datetime.datetime.utcnow()
         if message.uuid is None:
-            message.uuid = "{}".format(uuid.uuid4())
-        # self.debug("{}:\n{}".format(routing_key, message))
+            message.uuid = f"{uuid.uuid4()}"
+
         self._connection.ensure_connection()
+
         with producers[self._connection].acquire(
                 block=True, timeout=self._connection_timeout
         ) as producer:

@@ -96,3 +96,5 @@ env3/
 
 .idea
 cache
+/reports
+/builds

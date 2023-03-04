@@ -1,44 +1,56 @@
 # -*- coding: UTF-8 -*-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 __author__ = "d01"
 __email__ = "jungflor@gmail.com"
-__copyright__ = "Copyright (C) 2017-19, Florian JUNG"
+__copyright__ = "Copyright (C) 2017-23, Florian JUNG"
 __license__ = "MIT"
-__version__ = "0.1.1"
-__date__ = "2019-04-17"
+__version__ = "0.1.3"
+__date__ = "2023-03-02"
 # Created: 2017-05-01 23:47
 
-# based on https://github.com/nameko/nameko
-import warnings
-from kombu import Exchange
-from six.moves import queue
 
+# based on https://github.com/nameko/nameko
+import queue
+from typing import Any, Callable, Dict
+
+from flotils import get_logger
+from kombu import Exchange
 from nameko.amqp import get_connection, get_producer, UndeliverableMessage
 from nameko.constants import (
-    DEFAULT_RETRY_POLICY, DEFAULT_SERIALIZER, SERIALIZER_CONFIG_KEY)
-from nameko.constants import AMQP_URI_CONFIG_KEY, PERSISTENT
+    AMQP_URI_CONFIG_KEY,
+    DEFAULT_RETRY_POLICY,
+    DEFAULT_SERIALIZER,
+    PERSISTENT,
+    SERIALIZER_CONFIG_KEY,
+)
 from nameko.messaging import Publisher
 
 
-def get_exchange(service_name):
+logger = get_logger()
+
+
+def get_exchange(service_name: str) -> Exchange:
+    """
+    Create exchange for service
+
+    :param service_name: Which service to create for
+    """
     # TODO: move to correct exchange
     # exchange_name = "{}.events".format(service_name)
-    exchange_name = "{}".format(service_name)
+    exchange_name = f"{service_name}"
     exchange = Exchange(
         exchange_name, type="topic", durable=True, auto_delete=True,
         delivery_mode=PERSISTENT
     )
+
     return exchange
 
 
 # https://github.com/nameko/nameko/blob/master/nameko/standalone/events.py
-def event_dispatcher(nameko_config, **kwargs):
-    """ Return a function that dispatches nameko events.
-    """
+def event_dispatcher(
+        nameko_config: Dict[str, Any], **kwargs
+) -> Callable[[str, str, Any], None]:
+    """ Return a function that dispatches nameko events. """
     amqp_uri = nameko_config[AMQP_URI_CONFIG_KEY]
 
     kwargs = kwargs.copy()
@@ -47,7 +59,7 @@ def event_dispatcher(nameko_config, **kwargs):
     use_confirms = kwargs.pop('use_confirms', True)
     mandatory = kwargs.pop('mandatory', False)
 
-    def dispatch(service_name, event_type, event_data):
+    def dispatch(service_name: str, event_type: str, event_data: Any):
         """ Dispatch an event claiming to originate from `service_name` with
         the given `event_type` and `event_data`.
         """
@@ -57,7 +69,8 @@ def event_dispatcher(nameko_config, **kwargs):
         exchange = get_exchange(service_name)
 
         with get_connection(amqp_uri) as connection:
-            exchange.maybe_bind(connection)  # TODO: reqd? maybe_declare?
+            exchange.maybe_bind(connection)  # TODO: read? maybe_declare?
+
             with get_producer(amqp_uri, use_confirms) as producer:
                 msg = event_data
                 routing_key = event_type
@@ -73,7 +86,7 @@ def event_dispatcher(nameko_config, **kwargs):
 
                 if mandatory:
                     if not use_confirms:
-                        warnings.warn(
+                        logger.warning(
                             "Mandatory delivery was requested, but "
                             "unroutable messages cannot be detected without "
                             "publish confirms enabled."
@@ -91,7 +104,8 @@ def event_dispatcher(nameko_config, **kwargs):
 
 
 class EventDispatcher(Publisher):
-    """ Provides an event dispatcher method via dependency injection.
+    """
+    Provides an event dispatcher method via dependency injection.
     Events emitted will be dispatched via the service's events exchange,
     which automatically gets declared by the event dispatcher
     as a topic exchange.
@@ -109,23 +123,26 @@ class EventDispatcher(Publisher):
                 evt_data = 'ham and eggs'
                 self.dispatch_spam('spam.ham', evt_data)
     """
-    def __init__(self, **kwargs):
+
+    def __init__(self, **kwargs) -> None:
+        """ Constructor """
         self.kwargs = kwargs
         self.service_name = "manager_intent"
-        super(EventDispatcher, self).__init__()
+        super().__init__()
 
-    def setup(self):
+    def setup(self) -> None:
+        """ Setup exchange """
         self.config = self.container.config
         self.exchange = get_exchange(self.service_name)
-        super(EventDispatcher, self).setup()
+        super().setup()
 
-    def get_dependency(self, worker_ctx):
-        """ Inject a dispatch method onto the service instance
-        """
+    def get_dependency(self, worker_ctx) -> Callable[[str, Any], None]:
+        """ Inject a dispatch method onto the service instance """
         headers = self.get_message_headers(worker_ctx)
         kwargs = self.kwargs
         dispatcher = event_dispatcher(self.config, headers=headers, **kwargs)
 
-        def dispatch(event_type, event_data):
+        def dispatch(event_type: str, event_data: Any):
             dispatcher(self.service_name, event_type, event_data)
+
         return dispatch
