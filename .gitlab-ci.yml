@@ -30,6 +30,10 @@ stages:
   - Deploy
 
 
+dependency_scanning:
+  stage: Static Analysus
+
+
 setup:
   stage: Setup
   script:
