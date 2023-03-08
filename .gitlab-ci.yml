@@ -44,6 +44,8 @@ setup:
     - echo $CI_BUILD_REF
     - echo $CI_COMMIT_BRANCH
     - echo $CI_COMMIT_TAG
+    - apt-get update -qy
+    - apt-get install -y python-dev git
     - git fetch --all
     # Check if a commit tag && check CI_BRANCHES contains tag; get clear branch name; filter error message if not found; make remote branches seem local
     - '[[ -n $CI_COMMIT_TAG ]] && CI_BRANCHES=`git branch -a --contains "$CI_COMMIT_REF_NAME" 2>&1 | sed -E "s/^\s*\*?\s+(.+)/\1/" | sed -E "s/error:.+//" | sed -E "s/remotes\/origin\///"`'
@@ -66,6 +68,8 @@ setup:
 
 
 flake8:
+  needs:
+    - setup
   stage: Static Analysis
   before_script:
     - pip install -r requirements-dev.txt
@@ -75,6 +79,8 @@ flake8:
 
 
 mypy:
+  needs:
+    - setup
   stage: Static Analysis
   before_script:
     - pip install -r requirements-dev.txt
@@ -88,6 +94,8 @@ mypy:
 
 .pytest:
   stage: Test
+  needs:
+    - setup
   variables:
     PYPI_INDEX: prod
   before_script:
