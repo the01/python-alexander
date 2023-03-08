@@ -31,7 +31,7 @@ stages:
 
 
 dependency_scanning:
-  stage: Static Analysus
+  stage: Static Analysis
 
 
 setup:
