@@ -32,10 +32,15 @@ stages:
 
 dependency_scanning:
   stage: Static Analysis
+  needs: []
 
 
 setup:
   stage: Setup
+  needs: []
+  before_script:
+    - apt-get update -qy
+    - apt-get install -y python-dev git
   script:
     - echo $CI_JOB_TRIGGERED
     - echo $CI_PIPELINE_SOURCE
@@ -44,8 +49,6 @@ setup:
     - echo $CI_BUILD_REF
     - echo $CI_COMMIT_BRANCH
     - echo $CI_COMMIT_TAG
-    - apt-get update -qy
-    - apt-get install -y python-dev git
     - git fetch --all
     # Check if a commit tag && check CI_BRANCHES contains tag; get clear branch name; filter error message if not found; make remote branches seem local
     - '[[ -n $CI_COMMIT_TAG ]] && CI_BRANCHES=`git branch -a --contains "$CI_COMMIT_REF_NAME" 2>&1 | sed -E "s/^\s*\*?\s+(.+)/\1/" | sed -E "s/error:.+//" | sed -E "s/remotes\/origin\///"`'
@@ -68,9 +71,8 @@ setup:
 
 
 flake8:
-  needs:
-    - setup
   stage: Static Analysis
+  needs: []
   before_script:
     - pip install -r requirements-dev.txt
     - pip install -r requirements-test.txt
@@ -79,9 +81,8 @@ flake8:
 
 
 mypy:
-  needs:
-    - setup
   stage: Static Analysis
+  needs: []
   before_script:
     - pip install -r requirements-dev.txt
     - pip install -r requirements-test.txt
@@ -102,7 +103,7 @@ mypy:
     - pip install -r requirements-dev.txt
     - pip install -r requirements-test.txt
   script:
-    - PIP_INDEX_URL=http://pypi.lan/root/$PYPI_INDEX tox -e test
+    - PIP_INDEX_URL=http://pypi.lan/root/$PYPI_INDEX pytest -v tests --log-level DEBUG --cov=alexander_fw --cov-branch --cov-report xml:reports/coverage.xml --junitxml=reports/pytest.xml
     - sed -i -E "s|<source>.+</source>|<source>src</source>|g" reports/coverage.xml
     - sed -i -E 's|filename=".*/(alexander_fw/[a-zA-Z0-9\._/-]*)"| filename="\1"|g' reports/coverage.xml
   artifacts:
@@ -162,7 +163,7 @@ pytest:3.10:
 pytest:3.11:
   extends:
     - .pytest
-  image: python:3.10
+  image: python:3.11
   only:
     - master
     - tags
@@ -172,6 +173,10 @@ pytest:3.11:
   variables:
     PYPI_INDEX: develop
   stage: Deploy
+  needs:
+    - "pytest:3.11"
+    - "pytest:3.10"
+    - "pytest:3.9"
   before_script:
     - pip install -r requirements-dev.txt
   script:
