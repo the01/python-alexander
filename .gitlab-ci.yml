@@ -103,7 +103,7 @@ mypy:
     - pip install -r requirements-dev.txt
     - pip install -r requirements-test.txt
   script:
-    - PIP_INDEX_URL=http://pypi.lan/root/$PYPI_INDEX pytest -v tests --log-level DEBUG --cov=alexander_fw --cov-branch --cov-report xml:reports/coverage.xml --junitxml=reports/pytest.xml
+    - PIP_INDEX_URL=http://pypi.lan/root/$PYPI_INDEX tox -e test
     - sed -i -E "s|<source>.+</source>|<source>src</source>|g" reports/coverage.xml
     - sed -i -E 's|filename=".*/(alexander_fw/[a-zA-Z0-9\._/-]*)"| filename="\1"|g' reports/coverage.xml
   artifacts:
