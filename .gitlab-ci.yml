@@ -173,10 +173,6 @@ pytest:3.11:
   variables:
     PYPI_INDEX: develop
   stage: Deploy
-  needs:
-    - "pytest:3.11"
-    - "pytest:3.10"
-    - "pytest:3.9"
   before_script:
     - pip install -r requirements-dev.txt
   script:
