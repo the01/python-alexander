@@ -12,8 +12,8 @@ import abc
 import time
 from typing import Any, Dict, Optional, Union
 
-import nameko.rpc
 import nameko.exceptions
+import nameko.rpc
 from nameko.standalone.rpc import ClusterRpcProxy
 
 from ..dto import ActorMessage, InputMessage
