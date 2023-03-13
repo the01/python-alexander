@@ -8,7 +8,6 @@ __version__ = "0.1.3"
 __date__ = "2023-03-02"
 # Created: 2017-05-01 23:47
 
-
 # based on https://github.com/nameko/nameko
 import queue
 from typing import Any, Callable, Dict
