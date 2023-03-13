@@ -13,6 +13,7 @@ import time
 from typing import Any, Dict, Optional, Union
 
 import nameko.rpc
+import nameko.exceptions
 from nameko.standalone.rpc import ClusterRpcProxy
 
 from ..dto import ActorMessage, InputMessage
@@ -33,7 +34,7 @@ class Manager(ReactorModule, abc.ABC):
         nameko_sett = settings['nameko']
         self._cluster_proxy: ClusterRpcProxy = ClusterRpcProxy(
             nameko_sett,
-            timeout=settings.get('rpc_timeout', None),
+            timeout=nameko_sett.get('rpc_timeout', None),
         )
         self._proxy: Optional[Any] = None
 
@@ -69,7 +70,15 @@ class Manager(ReactorModule, abc.ABC):
         self.debug(f"{who}: {result}\n{msg}")
         actor_msg = ActorMessage.from_msg(msg)
         actor_msg.result = result
-        self.proxy[who].say(actor_msg)
+
+        try:
+            self.proxy[who].say(actor_msg)
+        except nameko.exceptions.RpcTimeout as e:
+            # Timeout means it was likely dropped in the queue, but the service did not
+            # finish in time - retry or assume it will be handled sometime?
+            # Since we are not using result, assume it being delivered is enough
+            # Eitherway will be consumed from actor queue
+            self.warning(f"Service '{who}' did not respond within {e.args}")
 
     def say_result(self, msg: ActorMessage) -> None:
         """

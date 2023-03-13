@@ -78,7 +78,7 @@ class RPCListener(ConsumerMixin, Loadable, StartStopable):
                 auto_delete=False, durable=True
             )
         self._nameko_queue_rpc = Queue(
-            "rpc-{}".format(service_name),
+            f"rpc-{service_name}",
             self._nameko_exchange_rpc,
             routing_key="{}.*".format(service_name),
             durable=True
@@ -226,4 +226,4 @@ class RPCListener(ConsumerMixin, Loadable, StartStopable):
         super().stop()
 
         self._nameko_queue_rpc = None
-        self._nameko_queue_rpc = None
+        self._nameko_exchange_rpc = None
