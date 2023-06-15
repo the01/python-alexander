@@ -15,7 +15,7 @@ RUN apt-get update && apt-get upgrade -y && \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/toni
-RUN mkdir -p /home/toni/cache /home/toni/config
+RUN mkdir -p /home/toni/config
 RUN python -m venv env
 
 ARG PIP_TRUSTED_HOST="pypi.gate.lan"
@@ -26,10 +26,10 @@ ENV PIP_DEFAULT_TIMEOUT=180
 
 RUN env/bin/pip install --disable-pip-version-check --no-cache-dir -U "alexander_fw${BUILD_ALEXANDER_VERSION}"
 
-ARG service_config="config/actor_ping.yml"
+ARG service_config="config/intent_keyword.yml"
 
 COPY ${service_config} ./config/config.yml
-COPY ./examples/actors/ping/run.py ./
+COPY ./src/intent/keyword/run.py ./
 
 
 
