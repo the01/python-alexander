@@ -20,6 +20,8 @@ instance:
   map:
     - key: ping
       intent: ping
+    - key: idfx
+      intent: idefix
 
 
 LOGGING:

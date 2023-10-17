@@ -20,6 +20,7 @@ instance:
     - echo
     - time
     - ping
+    - idefix
 
 
 LOGGING:

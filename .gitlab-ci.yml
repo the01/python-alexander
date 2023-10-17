@@ -74,8 +74,8 @@ flake8:
   stage: Static Analysis
   needs: []
   before_script:
-    - pip install -r requirements-dev.txt
-    - pip install -r requirements-test.txt
+    - pip install -r requirements-dev.txt -U
+    - pip install -r requirements-test.txt -U
   script:
     - flake8 src
 
