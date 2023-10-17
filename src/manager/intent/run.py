@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+""" Run intent manager """
 
 __author__ = "d01"
 __email__ = "jungflor@gmail.com"
@@ -11,10 +12,10 @@ __date__ = "2023-03-12"
 import logging
 
 import eventlet
-
-from alexander_fw import IntentManager, __version__ as package_version
-from alexander_fw.cli import cli_run
 from flotils.runable import SignalStopWrapper
+
+from alexander_fw import __version__ as package_version, IntentManager
+from alexander_fw.cli import cli_run
 
 
 logging.captureWarnings(True)
@@ -22,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 class WrapperIntentManager(IntentManager, SignalStopWrapper):
+    """ Main class """
 
     def stop(self):
         """ Stop instance """
@@ -33,7 +35,7 @@ class WrapperIntentManager(IntentManager, SignalStopWrapper):
 if __name__ == "__main__":
     import logging.config
     from flotils.logable import default_logging_config
-    
+
     logging.config.dictConfig(default_logging_config)
 
     quit(cli_run(

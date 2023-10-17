@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+""" Run keyword intent """
 
 __author__ = "d01"
 __email__ = "jungflor@gmail.com"
@@ -10,25 +11,24 @@ __date__ = "2023-03-13"
 
 from typing import Any, Dict, List, Optional, Tuple
 
-import eventlet
-
 # Needs to be patched ASAP
+import eventlet
 eventlet.monkey_patch()
+from flotils import get_logger, Loadable, StartStopable  # noqa E402
+import nameko.messaging  # noqa E402
+from nameko.rpc import rpc  # noqa E402
+import seta  # noqa E402
 
-from flotils import get_logger, Loadable, StartStopable
-from nameko.rpc import rpc
-import nameko.messaging
-import seta
-
-from alexander_fw.dto import IntentMessage, InputMessage
-from alexander_fw.cli import cli_run
+from alexander_fw.cli import cli_run  # noqa E402
+from alexander_fw.dto import InputMessage, IntentMessage  # noqa E402
 
 
 logger = get_logger()
 connection_errors = 0
 
 
-def patch_queue_consumer():
+def patch_queue_consumer() -> None:
+    """ Patch the used consumers """
     from nameko.rpc import RpcConsumer, ReplyListener
     from nameko.messaging import Consumer
 
@@ -38,10 +38,12 @@ def patch_queue_consumer():
 
 
 class PatchedQueueConsumer(nameko.messaging.QueueConsumer):
+    """ Fixed queue consumer - unknown what is fixed - con retry? """
 
     is_patched = True
 
     def on_connection_error(self, exc, interval):
+        """ Error connecting """
         global connection_errors
 
         connection_errors += 1
@@ -54,6 +56,7 @@ class PatchedQueueConsumer(nameko.messaging.QueueConsumer):
         super().on_connection_error(exc, interval)
 
     def on_consume_ready(self, connection, channel, consumers, **kwargs):
+        """ Ready to consume """
         global connection_errors
 
         connection_errors = 0
@@ -62,16 +65,20 @@ class PatchedQueueConsumer(nameko.messaging.QueueConsumer):
 
 
 class KeywordIntent(Loadable, StartStopable):
+    """ Intent with keyword"""
+
     # TODO: Type argument - regex match group
 
-    def __init__(self, settings=None):
+    def __init__(self, settings: Optional[Dict[str, Any]] = None) -> None:
+        """ Constructor """
         if settings is None:
             settings = {}
 
         super(KeywordIntent, self).__init__(settings)
+
         self._map: List[Dict[str, str]] = settings['map']
 
-    def _verify_map(self, map: List[Dict[str, str]]) -> None:
+    def _verify_map(self, map: List[Dict[str, str]]) -> None:  # noqa D107
         """
         Verify that map has valid structure
 
@@ -93,7 +100,7 @@ class KeywordIntent(Loadable, StartStopable):
         :return: All matches as tuple of intent, meta-intent,
                  information about best match
         """
-        matches = []
+        matches: List[Tuple[str, str, float]] = []
 
         if not line:
             return matches
@@ -124,18 +131,24 @@ class KeywordIntent(Loadable, StartStopable):
 
         return res
 
-    def start(self, blocking: bool = False):
+    def start(self, blocking: bool = False) -> None:
+        """ Start instance """
         self._verify_map(self._map)
 
 
 class KeywordDependency(seta.BaseDependency):
+    """ KeywordIntent """
 
-    def setup(self):
+    def setup(self) -> None:
+        """ Setup dependenxy """
         super().setup()
+
         self.instance = KeywordIntent(self.instance_config)
 
 
 class KeywordIntentService(seta.BaseService):
+    """ Keyword intent service """
+
     name = "service_intent_keyword"
     __version__ = __version__
     keyword: KeywordIntent = KeywordDependency()
@@ -145,7 +158,7 @@ class KeywordIntentService(seta.BaseService):
         """
         How much do I like this message
 
-        :param message: Message to asses
+        :param message: Message to assess
         :return: Value between 0 and 1
         """
         match = self.keyword.match(message.data)

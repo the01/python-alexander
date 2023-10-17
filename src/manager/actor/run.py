@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+""" Run actor manager """
 
 __author__ = "d01"
 __email__ = "jungflor@gmail.com"
@@ -13,9 +14,10 @@ import logging
 # import eventlet
 # # Needs to be patched ASAP
 # eventlet.monkey_patch()
-from alexander_fw import ActorManager, __version__ as package_version
-from alexander_fw.cli import cli_run
 from flotils.runable import SignalStopWrapper
+
+from alexander_fw import __version__ as package_version, ActorManager
+from alexander_fw.cli import cli_run
 
 
 logging.captureWarnings(True)
@@ -23,6 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 class WrapperActorManager(ActorManager, SignalStopWrapper):
+    """ Main class """
 
     def stop(self):
         """ Stop instance """
@@ -41,4 +44,3 @@ if __name__ == "__main__":
     quit(cli_run(
         "ActorManager", package_version, WrapperActorManager, runable=True
     ))
-

@@ -1,4 +1,4 @@
-image: python:3.11-slim
+image: python:3.11-slim-bullseye
 
 include:
   - template: Security/Dependency-Scanning.gitlab-ci.yml
@@ -8,7 +8,7 @@ include:
 
 cache:
   paths:
-    - ".cache/pip"
+    - "$CI_PROJECT_DIR/.cache/pip"
   key: "$CI_PROJECT_ID"
 
 variables:
