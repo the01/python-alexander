@@ -1,4 +1,4 @@
 seta >=0.1.7, <0.2
 nameko>=2.9, <3
 flotils
-typing-extensions >=4.4.0, <4.5
+typing-extensions
